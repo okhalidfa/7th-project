@@ -1,11 +1,11 @@
 import React from 'react';
 
-const mbl = () => {
+const Stats = () => {
     return (
         <div>
-            <p>khalid</p>
+            <h1>find the stats</h1>
         </div>
     );
 };
 
-export default mbl;
+export default Stats;
