@@ -5,7 +5,6 @@ import { useTimeline } from "../tm/TimelineContext";
 const Stats = () => {
   const { timeline } = useTimeline();
 
-  // Count each interaction type from real timeline data
   const counts = { Text: 0, Call: 0, Video: 0 };
   timeline.forEach((item) => {
     if (counts[item.type] !== undefined) counts[item.type]++;
@@ -17,21 +16,30 @@ const Stats = () => {
     { name: "Video", value: counts.Video, fill: "#22C55E" },
   ];
 
-  return (
-    <div className="bg-[#F8FAFC] py-10">
-      <h2 className="text-5xl font-bold ml-66 mb-5 mt-10">Friendship Analytics</h2>
-      <div className="bg-white rounded-xl shadow-sm p-6 w-250 mx-auto">
 
-        <h2 className="text-lg font-semibold text-gray-700 mb-6">
+  return (
+    <div className="bg-[#F8FAFC]  py-6 sm:py-2 md:py-10 px-4 sm:px-8 md:px-12 lg:px-50">
+
+      {/* Title */}
+      <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 sm:mb-8 mt-4 sm:mt-6 md:mt-10">
+        Friendship Analytics
+      </h2>
+
+
+      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 w-full">
+
+        <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6">
           By Interaction Type
         </h2>
 
         {timeline.length === 0 ? (
-          <p className="text-gray-400 text-center h-80 flex items-center justify-center">
-            No interactions yet. Go check in with a friend!
-          </p>
+          <div className="h-60 sm:h-72 md:h-80 flex items-center justify-center pb-5">
+            <p className="text-gray-400 text-center text-sm sm:text-base">
+              No interactions yet. Go check in with a friend!
+            </p>
+          </div>
         ) : (
-          <div className="w-full h-80 flex justify-center items-center">
+          <div className="w-full h-60 sm:h-72 md:h-80 flex justify-center items-center">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -47,8 +55,8 @@ const Stats = () => {
                     <Cell key={index} fill={entry.fill} />
                   ))}
                 </Pie>
-                <Tooltip />
-                <Legend />
+                <Tooltip/>
+                <Legend/>
               </PieChart>
             </ResponsiveContainer>
           </div>
