@@ -12,5 +12,5 @@ createRoot(document.getElementById('root')).render(
     <TimelineProvider>
       <RouterProvider router={router} />
     </TimelineProvider>
-  </StrictMode>,
+  </StrictMode  >,
 )
