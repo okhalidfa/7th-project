@@ -105,7 +105,7 @@ const onCount = friends.filter((friend) => friend.status === "On-track").length;
 const Home = () => {
     return (
         <div className='bg-[#F2F2F7] w-full min-h-screen pb-20'>
-            <div className='px-4 sm:px-8 md:px-12 lg:px-24 pt-6 lg:pt-15'>
+            <div className='px-4 sm:px-8 md:px-12 lg:px-40 pt-6 lg:pt-15'>
 
               <h1 className='font-bold text-2xl sm:text-3xl md:text-4xl lg:text-[48px] text-center'>
                 Friends to keep close in your life

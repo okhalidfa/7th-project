@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router';
 import { friends } from '../Home';
+import { useTimeline } from '../tm/TimelineContext'; // ✅ add this
 
-// ── Toast Component ──
 const Toast = ({ message, show }) => {
   if (!show) return null;
   return (
@@ -32,12 +32,19 @@ const formatDate = (dateStr) =>
 const Details = () => {
   const { id } = useParams();
   const friend = friends.find((f) => f.id === parseInt(id));
+  const { addEvent } = useTimeline(); // ✅ add this
 
   const [toast, setToast] = useState({ show: false, message: "" });
 
   const showToast = (message) => {
     setToast({ show: true, message });
     setTimeout(() => setToast({ show: false, message: "" }), 3000);
+  };
+
+  // ✅ single handler for all 3 buttons
+  const handleCheckin = (type) => {
+    addEvent(friend.name, type);
+    showToast(`${type} with ${friend.name}!`);
   };
 
   if (!friend) {
@@ -53,7 +60,6 @@ const Details = () => {
   return (
     <div className="bg-[#F2F2F7] min-h-screen p-4 md:p-6 lg:p-10">
 
-      {/* Toast */}
       <Toast show={toast.show} message={toast.message} />
 
       <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4 bg-white rounded-2xl shadow-sm p-4 md:p-6">
@@ -61,13 +67,8 @@ const Details = () => {
         {/* ── LEFT COLUMN ── */}
         <div className="lg:col-span-1 lg:border-r border-gray-100 lg:pr-6 flex flex-col">
 
-          {/* Profile */}
           <div className="flex flex-col items-center text-center pb-6 border-b border-gray-100">
-            <img
-              src={friend.picture}
-              alt={friend.name}
-              className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover"
-            />
+            <img src={friend.picture} alt={friend.name} className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover" />
             <h2 className="font-bold text-lg md:text-xl mt-3">{friend.name}</h2>
 
             <span className={`text-xs font-semibold px-3 py-1 rounded-full mt-2 ${status.className}`}>
@@ -86,7 +87,6 @@ const Details = () => {
             <p className="text-gray-400 text-sm mt-1">Preferred: {friend.email}</p>
           </div>
 
-          {/* Actions */}
           <div className="flex flex-col mt-4 divide-y divide-gray-100">
             <button className="flex items-center gap-2 py-3 text-sm text-gray-700 hover:bg-gray-50 px-2 rounded">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -95,7 +95,6 @@ const Details = () => {
               </svg>
               Snooze 2 Weeks
             </button>
-
             <button className="flex items-center gap-2 py-3 text-sm text-gray-700 hover:bg-gray-50 px-2 rounded">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="21 8 21 21 3 21 3 8"/>
@@ -104,7 +103,6 @@ const Details = () => {
               </svg>
               Archive
             </button>
-
             <button className="flex items-center gap-2 py-3 text-sm text-red-500 hover:bg-red-50 px-2 rounded">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="3 6 5 6 21 6"/>
@@ -120,7 +118,6 @@ const Details = () => {
         {/* ── RIGHT COLUMN ── */}
         <div className="lg:col-span-2 lg:pl-4 flex flex-col gap-4">
 
-          {/* Stats Row */}
           <div className="grid grid-cols-3 gap-2 md:gap-4">
             <div className="bg-gray-50 rounded-xl p-3 md:p-5 text-center">
               <p className="text-2xl md:text-3xl font-bold text-[#244D3F]">{friend.days_since_contact}</p>
@@ -136,27 +133,23 @@ const Details = () => {
             </div>
           </div>
 
-          {/* Relationship Goal */}
           <div className="bg-gray-50 rounded-xl p-4 md:p-5">
             <div className="flex justify-between items-center">
               <h3 className="font-semibold text-base md:text-lg">Relationship Goal</h3>
-              <button className="border border-gray-300 text-xs md:text-sm px-3 md:px-4 py-1 rounded-lg hover:bg-gray-100">
-                Edit
-              </button>
+              <button className="border border-gray-300 text-xs md:text-sm px-3 md:px-4 py-1 rounded-lg hover:bg-gray-100">Edit</button>
             </div>
             <p className="text-gray-600 mt-2 text-sm md:text-base">
               Connect every <span className="font-bold">{friend.goal} days</span>
             </p>
           </div>
 
-          {/* Quick Check-In */}
           <div className="bg-gray-50 rounded-xl p-4 md:p-5">
             <h3 className="font-semibold text-base md:text-lg mb-3">Quick Check-In</h3>
             <div className="grid grid-cols-3 gap-2 md:gap-4">
 
-              {/* Call */}
+              {/* ✅ Call */}
               <button
-                onClick={() => showToast(`Call with ${friend.name}!`)}
+                onClick={() => handleCheckin("Call")}
                 className="bg-white border border-gray-200 rounded-xl py-4 md:py-5 flex flex-col items-center gap-2 hover:shadow-md transition"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -165,9 +158,9 @@ const Details = () => {
                 <span className="text-xs md:text-sm font-medium">Call</span>
               </button>
 
-              {/* Text */}
+              {/* ✅ Text */}
               <button
-                onClick={() => showToast(`Text with ${friend.name}!`)}
+                onClick={() => handleCheckin("Text")}
                 className="bg-white border border-gray-200 rounded-xl py-4 md:py-5 flex flex-col items-center gap-2 hover:shadow-md transition"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -176,9 +169,9 @@ const Details = () => {
                 <span className="text-xs md:text-sm font-medium">Text</span>
               </button>
 
-              {/* Video */}
+              {/* ✅ Video */}
               <button
-                onClick={() => showToast(`Video with ${friend.name}!`)}
+                onClick={() => handleCheckin("Video")}
                 className="bg-white border border-gray-200 rounded-xl py-4 md:py-5 flex flex-col items-center gap-2 hover:shadow-md transition"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
